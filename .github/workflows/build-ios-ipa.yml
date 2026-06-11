@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Python icon dependencies
+        run: python3 -m pip install Pillow
+
       - name: Regenerate Capacitor assets and sync iOS
         run: npm test
 
@@ -60,10 +63,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [ -d "/Applications/Xcode_26.app" ]; then
-            selected_xcode="/Applications/Xcode_26.app"
-          else
-            selected_xcode="$(python3 - <<'PY'
+          selected_xcode="$(python3 - <<'PY'
           import glob
           import plistlib
           from pathlib import Path
@@ -86,19 +86,13 @@ jobs:
           print(max(candidates)[1])
           PY
           )"
-          fi
 
           echo "Selecting Xcode at $selected_xcode"
           sudo xcode-select -s "$selected_xcode/Contents/Developer"
+          sudo xcode-select --print-path
           xcodebuild -version
-
-          sdk_version="$(xcrun --sdk iphoneos --show-sdk-version)"
-          sdk_major="${sdk_version%%.*}"
-          echo "Selected iphoneos SDK version: $sdk_version"
-          if [ "$sdk_major" -lt 26 ]; then
-            echo "::error::Apple requires iOS 26 SDK or later. Selected Xcode provides iphoneos SDK $sdk_version. Update the GitHub macOS runner image or select Xcode_26.app when available."
-            exit 1
-          fi
+          xcodebuild -showsdks
+          echo "Selected iphoneos SDK version: $(xcrun --sdk iphoneos --show-sdk-version)"
 
       - name: Install Apple signing certificate and provisioning profile
         id: signing

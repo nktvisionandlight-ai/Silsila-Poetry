@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "assets": "node scripts/generate-assets.mjs",
+    "icons:pillow": "python3 scripts/generate-icons-pillow.py",
     "verify:icons": "node scripts/verify-icon-alpha.mjs",
     "sync:ios": "npx cap sync ios",
     "open:ios": "npx cap open ios",
-    "test": "npm run assets && npm run verify:icons && npx cap sync ios"
+    "test": "npm run assets && npm run icons:pillow && npm run verify:icons && npx cap sync ios"
   },
   "repository": {
     "type": "git",

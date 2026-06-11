@@ -1,0 +1,18 @@
+App name: Silsila
+
+Subtitle: Urdu Poetry for the Diaspora
+
+Description:
+A home for Urdu poetry for those who grew up between two cultures. Explore timeless verses by Ghalib, Faiz, and Parveen Shakir — by mood, by poet, by feeling. Some feelings don't translate. They become poetry.
+
+Keywords:
+urdu poetry, shayari, ghalib, faiz, diaspora, south asian, poetry app, desi poetry, ghazal, parveen shakir
+
+Category: Books
+
+Secondary category: Education
+
+Age rating: 4+
+
+What's new in this version:
+First release — a home for Urdu poetry for the South Asian diaspora

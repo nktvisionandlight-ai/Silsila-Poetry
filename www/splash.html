@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Silsila Splash</title>
+    <style>
+      :root {
+        background: #f5efe0;
+        color: #1c1c1a;
+        font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      }
+
+      body {
+        align-items: center;
+        background: #f5efe0;
+        display: flex;
+        min-height: 100vh;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      main {
+        animation: fade-in 2.4s ease-out both;
+        margin: auto;
+        text-align: center;
+      }
+
+      .quill {
+        color: #c8a050;
+        font-size: 4rem;
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+
+      h1 {
+        font-size: clamp(3rem, 12vw, 6rem);
+        font-weight: 600;
+        letter-spacing: 0.24em;
+        margin: 0;
+      }
+
+      p {
+        color: #a67c2e;
+        font-size: 1rem;
+        letter-spacing: 0.22em;
+        margin-top: 1rem;
+        text-transform: uppercase;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(0.5rem);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="quill" aria-hidden="true">✒</div>
+      <h1>SILSILA</h1>
+      <p>Urdu Poetry for the Diaspora</p>
+    </main>
+  </body>
+</html>

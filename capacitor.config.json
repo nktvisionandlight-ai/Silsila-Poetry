@@ -1,0 +1,9 @@
+{
+  "appId": "app.silsilapoetry",
+  "appName": "Silsila",
+  "webDir": "www",
+  "server": {
+    "url": "https://silsila-poetry.replit.app/",
+    "cleartext": false
+  }
+}

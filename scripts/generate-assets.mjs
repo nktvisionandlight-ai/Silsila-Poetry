@@ -62,6 +62,8 @@ function splashSvg(size = 2732) {
 async function pngFromSvg(svg, outPath, size) {
   await sharp(Buffer.from(svg))
     .resize(size.width, size.height, { fit: 'fill' })
+    .flatten({ background: cream })
+    .removeAlpha()
     .png()
     .toFile(outPath);
 }

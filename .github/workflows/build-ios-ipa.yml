@@ -56,9 +56,49 @@ jobs:
         run: npm test
 
       - name: Select Xcode
+        shell: bash
         run: |
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          set -euo pipefail
+
+          if [ -d "/Applications/Xcode_26.app" ]; then
+            selected_xcode="/Applications/Xcode_26.app"
+          else
+            selected_xcode="$(python3 - <<'PY'
+          import glob
+          import plistlib
+          from pathlib import Path
+
+          candidates = []
+          for app in glob.glob('/Applications/Xcode*.app'):
+              plist_path = Path(app) / 'Contents' / 'Info.plist'
+              try:
+                  with open(plist_path, 'rb') as fh:
+                      plist = plistlib.load(fh)
+                  version = plist.get('CFBundleShortVersionString', '0')
+                  parts = tuple(int(part) for part in version.split('.') if part.isdigit())
+                  candidates.append((parts, app))
+              except Exception:
+                  continue
+
+          if not candidates:
+              raise SystemExit('No Xcode installations found in /Applications')
+
+          print(max(candidates)[1])
+          PY
+          )"
+          fi
+
+          echo "Selecting Xcode at $selected_xcode"
+          sudo xcode-select -s "$selected_xcode/Contents/Developer"
           xcodebuild -version
+
+          sdk_version="$(xcrun --sdk iphoneos --show-sdk-version)"
+          sdk_major="${sdk_version%%.*}"
+          echo "Selected iphoneos SDK version: $sdk_version"
+          if [ "$sdk_major" -lt 26 ]; then
+            echo "::error::Apple requires iOS 26 SDK or later. Selected Xcode provides iphoneos SDK $sdk_version. Update the GitHub macOS runner image or select Xcode_26.app when available."
+            exit 1
+          fi
 
       - name: Install Apple signing certificate and provisioning profile
         id: signing
@@ -104,6 +144,7 @@ jobs:
         run: |
           xcodebuild \
             -resolvePackageDependencies \
+            -sdk iphoneos \
             -project "$APP_PROJECT" \
             -scheme "$APP_SCHEME"
 
@@ -117,6 +158,7 @@ jobs:
           xcodebuild archive \
             -project "$APP_PROJECT" \
             -scheme "$APP_SCHEME" \
+            -sdk iphoneos \
             -configuration Release \
             -destination "generic/platform=iOS" \
             -archivePath "$ARCHIVE_PATH" \

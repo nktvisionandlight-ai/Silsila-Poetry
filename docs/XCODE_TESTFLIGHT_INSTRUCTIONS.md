@@ -34,11 +34,11 @@ Manual input needed: your Apple Developer Team must be selected on your Mac. Thi
 
 1. In the same `Signing & Capabilities` tab, confirm `Bundle Identifier` is:
    ```text
-   com.silsila.app
+   app.silsilapoetry
    ```
-2. If Xcode shows another value, replace it with `com.silsila.app`.
+2. If Xcode shows another value, replace it with `app.silsilapoetry`.
 
-The project file in this repository is already configured with `PRODUCT_BUNDLE_IDENTIFIER = com.silsila.app`.
+The project file in this repository is already configured with `PRODUCT_BUNDLE_IDENTIFIER = app.silsilapoetry`.
 
 ## Set the version to 1.0.0
 

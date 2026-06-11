@@ -28,7 +28,7 @@ Apple requires every App Store IPA to be signed. The workflow needs these GitHub
 | --- | --- |
 | `APPLE_CERTIFICATE_BASE64` | Base64-encoded `.p12` Apple Distribution certificate |
 | `APPLE_CERTIFICATE_PASSWORD` | Password for that `.p12` certificate |
-| `APPLE_PROVISIONING_PROFILE_BASE64` | Base64-encoded App Store provisioning profile for `com.silsila.app` |
+| `APPLE_PROVISIONING_PROFILE_BASE64` | Base64-encoded App Store provisioning profile for `app.silsilapoetry` |
 | `APPLE_TEAM_ID` | Your Apple Developer Team ID |
 
 ## Create the Apple signing files
@@ -40,7 +40,7 @@ You can create these from Apple Developer without installing Xcode, but you do n
 In Apple Developer, create or confirm this explicit App ID:
 
 ```text
-com.silsila.app
+app.silsilapoetry
 ```
 
 ### 2. Apple Distribution certificate
@@ -54,7 +54,7 @@ The `.p12` must include the private key. If you create the certificate request o
 Create an App Store provisioning profile for:
 
 ```text
-com.silsila.app
+app.silsilapoetry
 ```
 
 Download the `.mobileprovision` file.
@@ -138,7 +138,7 @@ The workflow stops immediately and names the missing secret. Add it under GitHub
 Make sure the provisioning profile is:
 
 - Type: App Store
-- Bundle ID: `com.silsila.app`
+- Bundle ID: `app.silsilapoetry`
 - Team: the same team as `APPLE_TEAM_ID`
 - Certificate: the same Apple Distribution certificate you uploaded as `.p12`
 

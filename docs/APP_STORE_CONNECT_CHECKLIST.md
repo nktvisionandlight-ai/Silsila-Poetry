@@ -3,7 +3,7 @@
 ## App information
 
 - App name: `Silsila`
-- Bundle ID: `com.silsila.app`
+- Bundle ID: `app.silsilapoetry`
 - SKU: choose a unique internal value, for example `silsila-ios-1`
 - Primary language: English
 - Subtitle: `Urdu Poetry for the Diaspora`

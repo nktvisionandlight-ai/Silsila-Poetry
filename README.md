@@ -10,7 +10,7 @@ https://silsila-poetry.replit.app/
 
 Capacitor configuration:
 
-- App ID: `com.silsila.app`
+- App ID: `app.silsilapoetry`
 - App name: `Silsila`
 - Web directory: `www`
 - Runtime server URL: `https://silsila-poetry.replit.app/`

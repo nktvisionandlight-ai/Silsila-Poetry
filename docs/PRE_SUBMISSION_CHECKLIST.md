@@ -3,12 +3,12 @@
 ## Automated or remote checks from this environment
 
 - [x] Live app URL responds: `https://silsila-poetry.replit.app/`
-- [x] Capacitor app ID configured: `com.silsila.app`
+- [x] Capacitor app ID configured: `app.silsilapoetry`
 - [x] Capacitor app name configured: `Silsila`
 - [x] Capacitor `webDir` configured: `www`
 - [x] Capacitor remote server URL configured: `https://silsila-poetry.replit.app/`
 - [x] iOS project generated under `ios/App`
-- [x] iOS bundle identifier configured as `com.silsila.app`
+- [x] iOS bundle identifier configured as `app.silsilapoetry`
 - [x] iOS marketing version configured as `1.0.0`
 - [x] iOS build number configured as `1`
 - [x] Required requested icon sizes generated:

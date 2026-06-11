@@ -18,8 +18,8 @@ jobs:
       APP_SCHEME: App
       APP_PROJECT: ios/App/App.xcodeproj
       APP_BUNDLE_ID: app.silsilapoetry
-      ARCHIVE_PATH: ${{ runner.temp }}/Silsila.xcarchive
-      EXPORT_PATH: ${{ runner.temp }}/SilsilaExport
+      ARCHIVE_PATH: build/Silsila.xcarchive
+      EXPORT_PATH: build/SilsilaExport
 
     steps:
       - name: Check required signing secrets
@@ -114,6 +114,7 @@ jobs:
           if [ -n "${BUILD_NUMBER}" ]; then
             EXTRA_BUILD_SETTINGS+=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER")
           fi
+          mkdir -p "$(dirname "$ARCHIVE_PATH")"
 
           xcodebuild archive \
             -project "$APP_PROJECT" \

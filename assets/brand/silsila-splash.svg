@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+    <rect width="2732" height="2732" fill="#F5EFE0"/>
+    <circle cx="1366" cy="1366" r="690" fill="none" stroke="#C8A050" stroke-width="8" opacity="0.18"/>
+    
+    <g transform="translate(1260 1040) scale(1.65)" fill="none" stroke="#C8A050" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M110 8 C64 19 31 55 12 112 C65 94 101 60 110 8 Z" fill="#C8A050" opacity="0.88" stroke="none"/>
+      <path d="M98 21 C70 49 43 77 16 107" stroke="#F5EFE0" stroke-width="5" opacity="0.9"/>
+      <path d="M65 52 L90 45" stroke="#F5EFE0" stroke-width="4" opacity="0.65"/>
+      <path d="M51 67 L76 60" stroke="#F5EFE0" stroke-width="4" opacity="0.65"/>
+      <path d="M38 82 L63 75" stroke="#F5EFE0" stroke-width="4" opacity="0.65"/>
+      <path d="M18 111 L-36 165" stroke="#C8A050" stroke-width="9"/>
+      <path d="M-39 168 L-57 186" stroke="#A67C2E" stroke-width="5"/>
+    </g>
+  
+    <text x="1366" y="1448" text-anchor="middle" font-family="Cormorant Garamond, Cormorant, Georgia, serif" font-size="218" font-weight="600" letter-spacing="40" fill="#1C1C1A">SILSILA</text>
+    <text x="1366" y="1548" text-anchor="middle" font-family="Cormorant Garamond, Cormorant, Georgia, serif" font-size="54" letter-spacing="12" fill="#A67C2E">URDU POETRY FOR THE DIASPORA</text>
+  </svg>

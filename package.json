@@ -1,0 +1,36 @@
+{
+  "name": "silsila-ios-wrapper",
+  "version": "1.0.0",
+  "description": "Capacitor iOS wrapper and App Store assets for Silsila.",
+  "main": "index.js",
+  "scripts": {
+    "assets": "node scripts/generate-assets.mjs",
+    "sync:ios": "npx cap sync ios",
+    "open:ios": "npx cap open ios",
+    "test": "npm run assets && npx cap sync ios"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nktvisionandlight-ai/Silsila-Poetry.git"
+  },
+  "keywords": [
+    "capacitor",
+    "ios",
+    "urdu",
+    "poetry"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nktvisionandlight-ai/Silsila-Poetry/issues"
+  },
+  "homepage": "https://github.com/nktvisionandlight-ai/Silsila-Poetry#readme",
+  "dependencies": {
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/ios": "^8.4.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.0"
+  }
+}

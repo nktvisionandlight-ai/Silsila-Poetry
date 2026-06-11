@@ -142,6 +142,11 @@ jobs:
             -project "$APP_PROJECT" \
             -scheme "$APP_SCHEME"
 
+      - name: Strip alpha from app icons before build
+        run: |
+          python3 scripts/generate-icons-pillow.py
+          npm run verify:icons
+
       - name: Archive iOS app
         shell: bash
         run: |

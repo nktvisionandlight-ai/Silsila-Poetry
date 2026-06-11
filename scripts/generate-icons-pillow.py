@@ -1,16 +1,21 @@
 from pathlib import Path
+import math
 from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
 BRAND_DIR = ROOT / "assets" / "brand"
 APP_ICON_DIR = ROOT / "ios" / "App" / "App" / "Assets.xcassets" / "AppIcon.appiconset"
+SOURCE_ICON_PATH = BRAND_DIR / "source-app-icon.png"
 
 CREAM = (245, 239, 224)
 CHARCOAL = (28, 28, 26)
 GOLD = (200, 160, 80)
 MUTED_GOLD = (166, 124, 46)
 WINE = (58, 14, 14)
+DARK_BROWN = (55, 27, 13)
+DEEP_BROWN = (38, 18, 9)
+LIGHT_GOLD = (232, 196, 117)
 
 
 REQUESTED_BRAND_ICONS = {
@@ -72,66 +77,113 @@ def centered_text(draw: ImageDraw.ImageDraw, xy: tuple[int, int], text: str, ima
         x += int(width) + spacing
 
 
-def draw_quill(draw: ImageDraw.ImageDraw, size: int) -> None:
-    scale = size / 1024
+def blend(a: tuple[int, int, int], b: tuple[int, int, int], t: float) -> tuple[int, int, int]:
+    return tuple(int(a[i] * (1 - t) + b[i] * t) for i in range(3))
+
+
+def draw_source_background(image: Image.Image) -> None:
+    pixels = image.load()
+    width, height = image.size
+    cx = width / 2
+    cy = height / 2
+    max_dist = math.hypot(cx, cy)
+    for y in range(height):
+        for x in range(width):
+            dist = math.hypot(x - cx, y - cy) / max_dist
+            pixels[x, y] = blend(DARK_BROWN, DEEP_BROWN, min(1.0, dist * 1.35))
+
+
+def rotated_point(cx: int, cy: int, radius: float, angle: float) -> tuple[int, int]:
+    return (int(cx + math.cos(angle) * radius), int(cy + math.sin(angle) * radius))
+
+
+def draw_mandala(draw: ImageDraw.ImageDraw, size: int) -> None:
     cx = size // 2
-    top = int(size * 0.22)
-    feather = [
-        (cx + int(65 * scale), top),
-        (cx + int(20 * scale), top + int(35 * scale)),
-        (cx - int(35 * scale), top + int(110 * scale)),
-        (cx - int(95 * scale), top + int(175 * scale)),
-        (cx - int(10 * scale), top + int(145 * scale)),
-        (cx + int(48 * scale), top + int(78 * scale)),
-    ]
-    draw.polygon(feather, fill=GOLD)
-    draw.line(
-        [
-            (cx + int(45 * scale), top + int(25 * scale)),
-            (cx - int(95 * scale), top + int(175 * scale)),
-            (cx - int(170 * scale), top + int(260 * scale)),
-        ],
-        fill=MUTED_GOLD,
-        width=max(2, int(8 * scale)),
-    )
-    for offset in (58, 88, 118):
-        draw.line(
-            [
-                (cx - int(offset * scale), top + int((offset + 58) * scale)),
-                (cx + int((20 - offset / 3) * scale), top + int((offset + 30) * scale)),
-            ],
-            fill=CREAM,
-            width=max(1, int(4 * scale)),
+    cy = int(size * 0.40)
+    scale = size / 1024
+
+    for radius, width, color in [
+        (245 * scale, 10 * scale, LIGHT_GOLD),
+        (178 * scale, 6 * scale, GOLD),
+        (105 * scale, 4 * scale, MUTED_GOLD),
+    ]:
+        bbox = (cx - radius, cy - radius, cx + radius, cy + radius)
+        draw.ellipse(bbox, outline=color, width=max(1, int(width)))
+
+    for i in range(8):
+        angle = -math.pi / 2 + i * math.pi / 4
+        outer = rotated_point(cx, cy, 305 * scale, angle)
+        left = rotated_point(cx, cy, 155 * scale, angle - 0.23)
+        right = rotated_point(cx, cy, 155 * scale, angle + 0.23)
+        inner = rotated_point(cx, cy, 74 * scale, angle)
+        draw.polygon([inner, left, outer, right], outline=LIGHT_GOLD, fill=None)
+        draw.line([inner, outer], fill=GOLD, width=max(1, int(5 * scale)))
+
+    for i in range(16):
+        angle = i * math.pi / 8
+        start = rotated_point(cx, cy, 55 * scale, angle)
+        end = rotated_point(cx, cy, 220 * scale, angle)
+        draw.line([start, end], fill=GOLD, width=max(1, int(3 * scale)))
+
+    for i in range(8):
+        angle = i * math.pi / 4
+        flower_center = rotated_point(cx, cy, 155 * scale, angle)
+        petal_r = max(3, int(13 * scale))
+        for j in range(6):
+            petal = rotated_point(flower_center[0], flower_center[1], 17 * scale, j * math.pi / 3)
+            draw.ellipse(
+                (petal[0] - petal_r, petal[1] - petal_r, petal[0] + petal_r, petal[1] + petal_r),
+                fill=LIGHT_GOLD,
+            )
+        draw.ellipse(
+            (flower_center[0] - petal_r, flower_center[1] - petal_r, flower_center[0] + petal_r, flower_center[1] + petal_r),
+            fill=GOLD,
         )
 
+    center_r = int(38 * scale)
+    draw.ellipse((cx - center_r, cy - center_r, cx + center_r, cy + center_r), fill=LIGHT_GOLD)
+    for i in range(12):
+        angle = i * math.pi / 6
+        tip = rotated_point(cx, cy, 70 * scale, angle)
+        left = rotated_point(cx, cy, 28 * scale, angle - 0.14)
+        right = rotated_point(cx, cy, 28 * scale, angle + 0.14)
+        draw.polygon([left, tip, right], fill=GOLD)
 
-def create_icon(size: int) -> Image.Image:
-    image = Image.new("RGB", (size, size), CREAM)
+
+def create_source_icon() -> Image.Image:
+    size = 1024
+    image = Image.new("RGB", (size, size), DARK_BROWN)
+    draw_source_background(image)
     draw = ImageDraw.Draw(image)
-    scale = size / 1024
 
-    margin = int(size * 0.11)
-    draw.ellipse(
-        (margin, margin, size - margin, size - margin),
-        outline=tuple(int(CREAM[i] * 0.66 + GOLD[i] * 0.34) for i in range(3)),
-        width=max(1, int(8 * scale)),
-    )
+    draw_mandala(draw, size)
 
-    draw_quill(draw, size)
+    title_font = font(86, bold=False)
+    centered_text(draw, (0, 756), "SILSILA", size, title_font, LIGHT_GOLD, spacing=48)
 
-    title_font = font(max(8, int(118 * scale)), bold=True)
-    subtitle_font = font(max(6, int(30 * scale)))
-    centered_text(draw, (0, int(size * 0.58)), "SILSILA", size, title_font, CHARCOAL, spacing=max(0, int(18 * scale)))
+    line_y = 888
+    draw.line((350, line_y, 470, line_y), fill=GOLD, width=2)
+    draw.line((554, line_y, 674, line_y), fill=GOLD, width=2)
+    for x, y, r in [(512, line_y, 16), (486, line_y, 7), (538, line_y, 7)]:
+        draw.polygon([(x, y - r), (x + r, y), (x, y + r), (x - r, y)], outline=LIGHT_GOLD, fill=None)
 
-    if size >= 120:
-        centered_text(draw, (0, int(size * 0.68)), "URDU POETRY", size, subtitle_font, MUTED_GOLD, spacing=max(0, int(5 * scale)))
-
+    SOURCE_ICON_PATH.parent.mkdir(parents=True, exist_ok=True)
+    image.save(SOURCE_ICON_PATH, format="PNG")
     return image
 
 
-def save_rgb_icon(path: Path, size: int) -> None:
+def source_icon() -> Image.Image:
+    image = create_source_icon()
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+    return image
+
+
+def save_rgb_icon(path: Path, source: Image.Image, size: int) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    image = create_icon(size)
+    design = source.resize((size, size), Image.Resampling.LANCZOS).convert("RGB")
+    image = Image.new("RGB", (size, size), CREAM)
+    image.paste(design, (0, 0))
     if image.mode != "RGB":
         raise RuntimeError(f"{path} is {image.mode}, expected RGB")
     image.save(path, format="PNG")
@@ -141,13 +193,15 @@ def main() -> None:
     for png in APP_ICON_DIR.glob("*.png"):
         png.unlink()
 
+    source = source_icon()
+
     for name, size in REQUESTED_BRAND_ICONS.items():
-        save_rgb_icon(BRAND_DIR / name, size)
+        save_rgb_icon(BRAND_DIR / name, source, size)
 
     for name, size in APP_ICON_CATALOG.items():
-        save_rgb_icon(APP_ICON_DIR / name, size)
+        save_rgb_icon(APP_ICON_DIR / name, source, size)
 
-    print(f"Generated {len(APP_ICON_CATALOG)} iOS asset catalog icons and {len(REQUESTED_BRAND_ICONS)} brand icons as RGB PNGs.")
+    print(f"Generated {SOURCE_ICON_PATH.relative_to(ROOT)}, {len(APP_ICON_CATALOG)} iOS asset catalog icons, and {len(REQUESTED_BRAND_ICONS)} brand icons as RGB PNGs.")
 
 
 if __name__ == "__main__":

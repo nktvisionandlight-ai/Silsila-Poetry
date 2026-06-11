@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       build_number:
-        description: "Optional build number to use for this archive"
+        description: Optional build number to use for this archive
         required: false
         type: string
 
@@ -20,9 +20,11 @@ jobs:
       APP_BUNDLE_ID: app.silsilapoetry
       ARCHIVE_PATH: build/Silsila.xcarchive
       EXPORT_PATH: build/SilsilaExport
+      EXPORT_OPTIONS_PATH: build/ExportOptions.plist
 
     steps:
       - name: Check required signing secrets
+        shell: bash
         run: |
           missing=0
           for secret_name in APPLE_CERTIFICATE_BASE64 APPLE_CERTIFICATE_PASSWORD APPLE_PROVISIONING_PROFILE_BASE64 APPLE_TEAM_ID; do
@@ -110,10 +112,13 @@ jobs:
       - name: Archive iOS app
         shell: bash
         run: |
-          EXTRA_BUILD_SETTINGS=()
-          if [ -n "${BUILD_NUMBER}" ]; then
-            EXTRA_BUILD_SETTINGS+=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER")
+          set -euo pipefail
+
+          extra_build_settings=()
+          if [ -n "$BUILD_NUMBER" ]; then
+            extra_build_settings+=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER")
           fi
+
           mkdir -p "$(dirname "$ARCHIVE_PATH")"
 
           xcodebuild archive \
@@ -126,14 +131,18 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="${{ steps.signing.outputs.profile_name }}" \
-            "${EXTRA_BUILD_SETTINGS[@]}" \
+            "${extra_build_settings[@]}" \
             clean archive
         env:
           BUILD_NUMBER: ${{ inputs.build_number }}
 
       - name: Create export options
+        shell: bash
         run: |
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          set -euo pipefail
+          mkdir -p "$(dirname "$EXPORT_OPTIONS_PATH")"
+
+          cat > "$EXPORT_OPTIONS_PATH" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -163,7 +172,7 @@ jobs:
           xcodebuild \
             -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportOptionsPlist "$EXPORT_OPTIONS_PATH" \
             -exportPath "$EXPORT_PATH"
           find "$EXPORT_PATH" -name "*.ipa" -print
 
@@ -171,6 +180,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Silsila-App-Store-IPA
-          path: ${{ env.EXPORT_PATH }}/*.ipa
+          path: build/SilsilaExport/*.ipa
           if-no-files-found: error
           retention-days: 14

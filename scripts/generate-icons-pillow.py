@@ -173,9 +173,18 @@ def create_source_icon() -> Image.Image:
 
 
 def source_icon() -> Image.Image:
-    image = create_source_icon()
-    if image.mode != "RGB":
-        image = image.convert("RGB")
+    if not SOURCE_ICON_PATH.exists():
+        raise FileNotFoundError(f"Missing source app icon: {SOURCE_ICON_PATH}")
+
+    source = Image.open(SOURCE_ICON_PATH)
+    if source.mode == "RGB":
+        return source
+
+    image = Image.new("RGB", source.size, CREAM)
+    if source.mode in {"RGBA", "LA"} or (source.mode == "P" and "transparency" in source.info):
+        image.paste(source.convert("RGBA"), (0, 0), source.convert("RGBA"))
+    else:
+        image.paste(source.convert("RGB"), (0, 0))
     return image
 
 
@@ -201,7 +210,7 @@ def main() -> None:
     for name, size in APP_ICON_CATALOG.items():
         save_rgb_icon(APP_ICON_DIR / name, source, size)
 
-    print(f"Generated {SOURCE_ICON_PATH.relative_to(ROOT)}, {len(APP_ICON_CATALOG)} iOS asset catalog icons, and {len(REQUESTED_BRAND_ICONS)} brand icons as RGB PNGs.")
+    print(f"Used {SOURCE_ICON_PATH.relative_to(ROOT)} to generate {len(APP_ICON_CATALOG)} iOS asset catalog icons and {len(REQUESTED_BRAND_ICONS)} brand icons as RGB PNGs.")
 
 
 if __name__ == "__main__":
